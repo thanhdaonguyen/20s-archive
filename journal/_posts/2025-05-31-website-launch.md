@@ -10,13 +10,13 @@ weather:
   emoji: "🌙"
   text: "Clear evening"
 location: "Hanoi, Vietnam"
-images:
-  - url: "/assets/images/journal/2025-05-31-workspace.jpg"
-    alt: "My workspace setup while building the site"
-    caption: "Late night coding session to finish the archive"
-  - url: "/assets/images/journal/2025-05-31-design.jpg"
-    alt: "Design mockups on screen"
-    caption: "Working through the final design details"
+# images:
+#   - url: "/assets/images/journal/2025-05-31-workspace.jpg"
+#     alt: "My workspace setup while building the site"
+#     caption: "Late night coding session to finish the archive"
+#   - url: "/assets/images/journal/2025-05-31-design.jpg"
+#     alt: "Design mockups on screen"
+#     caption: "Working through the final design details"
 ---
 
 Finally launched my personal archive website! It's been a few weeks of evening coding sessions, but I'm really happy with how it turned out. The site brings together three things I wanted to organize better: my daily journal entries, technical blog posts, and a proper showcase for my research projects.
