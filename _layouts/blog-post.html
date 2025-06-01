@@ -1,0 +1,333 @@
+---
+layout: default
+---
+
+<article class="blog-post" itemscope itemtype="http://schema.org/BlogPosting">
+    <header class="blog-post-header">
+        {% if page.category %}
+        <a href="{{ '/blog' | relative_url }}?category={{ page.category | slugify }}" class="blog-post-category">
+            {{ page.category }}
+        </a>
+        {% endif %}
+        
+        <h1 class="blog-post-title" itemprop="headline">{{ page.title }}</h1>
+        
+        {% if page.subtitle %}
+        <p class="blog-post-subtitle">{{ page.subtitle }}</p>
+        {% endif %}
+        
+        <div class="blog-post-meta">
+            <div class="blog-post-date">
+                <time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+                    {{ page.date | date: "%B %d, %Y" }}
+                </time>
+            </div>
+            
+            {% if page.read_time %}
+            <div class="blog-post-read-time">
+                {{ page.read_time }} min read
+            </div>
+            {% else %}
+            <div class="blog-post-read-time">
+                {% assign words = content | number_of_words %}
+                {% assign read_time = words | divided_by: 200 | plus: 1 %}
+                {{ read_time }} min read
+            </div>
+            {% endif %}
+            
+            <div class="blog-post-word-count">
+                {{ content | number_of_words }} words
+            </div>
+        </div>
+    </header>
+
+    {% if page.featured_image %}
+    <div class="blog-post-featured-image">
+        <img src="{{ page.featured_image.url | relative_url }}" 
+             alt="{{ page.featured_image.alt | default: page.title }}" 
+             loading="eager"
+             itemprop="image">
+        {% if page.featured_image.caption %}
+        <div class="image-caption">{{ page.featured_image.caption }}</div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="blog-post-content" itemprop="articleBody">
+        {{ content }}
+    </div>
+
+    <footer class="blog-post-footer">
+        {% if page.tags and page.tags.size > 0 %}
+        <div class="blog-post-tags">
+            <div class="tags-title">Tagged with</div>
+            <div class="tag-list">
+                {% for tag in page.tags %}
+                <a href="{{ '/blog' | relative_url }}?tag={{ tag | slugify }}" class="tag">
+                    {{ tag }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Author info -->
+        <div class="blog-post-author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <div class="author-info">
+                <span class="author-label">Written by</span>
+                <span class="author-name" itemprop="name">{{ site.author }}</span>
+            </div>
+        </div>
+        
+        <!-- Share buttons -->
+        <div class="blog-post-share">
+            <span class="share-label">Share this post:</span>
+            <div class="share-buttons">
+                <button class="share-btn" onclick="sharePost('twitter')" title="Share on Twitter">
+                    🐦
+                </button>
+                <button class="share-btn" onclick="sharePost('linkedin')" title="Share on LinkedIn">
+                    💼
+                </button>
+                <button class="share-btn" onclick="sharePost('copy')" title="Copy link">
+                    🔗
+                </button>
+            </div>
+        </div>
+    </footer>
+</article>
+
+<!-- Blog post navigation -->
+<nav class="blog-navigation">
+    {% if page.previous and page.previous.categories contains 'blog' %}
+    <a href="{{ page.previous.url | relative_url }}" class="nav-post prev" rel="prev">
+        <div class="nav-label">Previous Post</div>
+        <div class="nav-title">{{ page.previous.title }}</div>
+    </a>
+    {% endif %}
+    
+    {% if page.next and page.next.categories contains 'blog' %}
+    <a href="{{ page.next.url | relative_url }}" class="nav-post next" rel="next">
+        <div class="nav-label">Next Post</div>
+        <div class="nav-title">{{ page.next.title }}</div>
+    </a>
+    {% endif %}
+</nav>
+
+<!-- Related posts -->
+{% assign related_posts = site.posts | where: "categories", "blog" | sample: 3 %}
+{% if related_posts.size > 0 %}
+<section class="related-posts">
+    <h2 class="related-title">Related Posts</h2>
+    <div class="related-grid">
+        {% for post in related_posts %}
+        {% unless post.url == page.url %}
+        <a href="{{ post.url | relative_url }}" class="related-post">
+            <div class="related-post-title">{{ post.title }}</div>
+            <div class="related-post-date">{{ post.date | date: "%B %d, %Y" }}</div>
+        </a>
+        {% endunless %}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Back to blog archive -->
+<div class="text-center" style="margin-top: 3rem;">
+    <a href="{{ '/blog' | relative_url }}" class="btn btn-secondary">
+        ← Back to Blog Archive
+    </a>
+</div>
+
+<!-- Schema.org structured data -->
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "{{ page.title | escape }}",
+    "description": "{{ page.excerpt | default: page.subtitle | default: content | strip_html | truncate: 160 | escape }}",
+    "datePublished": "{{ page.date | date_to_xmlschema }}",
+    "dateModified": "{{ page.last_modified_at | default: page.date | date_to_xmlschema }}",
+    "author": {
+        "@type": "Person",
+        "name": "{{ site.author }}"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ site.title }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ site.logo | absolute_url }}"
+        }
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ page.url | absolute_url }}"
+    }
+    {% if page.featured_image %},
+    "image": {
+        "@type": "ImageObject",
+        "url": "{{ page.featured_image.url | absolute_url }}",
+        "width": "{{ page.featured_image.width | default: 1200 }}",
+        "height": "{{ page.featured_image.height | default: 630 }}"
+    }
+    {% endif %}
+    {% if page.tags and page.tags.size > 0 %},
+    "keywords": [
+        {% for tag in page.tags %}
+        "{{ tag | escape }}"{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+    ]
+    {% endif %}
+}
+</script>
+
+<script>
+// Blog post specific JavaScript
+function sharePost(platform) {
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent(document.title);
+    const text = encodeURIComponent('Check out this blog post: ' + document.title);
+    
+    switch(platform) {
+        case 'twitter':
+            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+            break;
+        case 'linkedin':
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
+            break;
+        case 'copy':
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Link copied to clipboard!');
+            });
+            break;
+    }
+}
+
+// Enhanced blog post functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Add reading progress indicator
+    addReadingProgress();
+    
+    // Initialize code syntax highlighting if available
+    if (window.Prism) {
+        Prism.highlightAll();
+    }
+    
+    // Add table of contents if headings exist
+    generateTableOfContents();
+    
+    // Initialize image gallery
+    if (window.Gallery && document.querySelector('.blog-post-content img')) {
+        window.Gallery.init();
+    }
+});
+
+function addReadingProgress() {
+    const article = document.querySelector('.blog-post-content');
+    if (!article) return;
+    
+    const progressBar = document.createElement('div');
+    progressBar.className = 'reading-progress';
+    progressBar.innerHTML = '<div class="progress-bar"></div>';
+    document.body.appendChild(progressBar);
+    
+    window.addEventListener('scroll', () => {
+        const articleTop = article.offsetTop;
+        const articleHeight = article.offsetHeight;
+        const windowHeight = window.innerHeight;
+        const scrollTop = window.pageYOffset;
+        
+        const progress = Math.min(
+            Math.max((scrollTop - articleTop + windowHeight/3) / articleHeight, 0),
+            1
+        );
+        
+        progressBar.querySelector('.progress-bar').style.width = (progress * 100) + '%';
+    });
+}
+
+function generateTableOfContents() {
+    const headings = document.querySelectorAll('.blog-post-content h2, .blog-post-content h3');
+    if (headings.length < 3) return;
+    
+    const toc = document.createElement('div');
+    toc.className = 'table-of-contents';
+    toc.innerHTML = '<h3>Table of Contents</h3><ul></ul>';
+    
+    const tocList = toc.querySelector('ul');
+    
+    headings.forEach((heading, index) => {
+        const id = `heading-${index}`;
+        heading.id = id;
+        
+        const li = document.createElement('li');
+        li.className = heading.tagName.toLowerCase();
+        li.innerHTML = `<a href="#${id}">${heading.textContent}</a>`;
+        tocList.appendChild(li);
+    });
+    
+    const firstParagraph = document.querySelector('.blog-post-content p');
+    if (firstParagraph) {
+        firstParagraph.parentNode.insertBefore(toc, firstParagraph);
+    }
+}
+</script>
+
+<style>
+.reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+}
+
+.reading-progress .progress-bar {
+    height: 100%;
+    background: var(--color-primary, #3182ce);
+    width: 0%;
+    transition: width 0.1s ease;
+}
+
+.table-of-contents {
+    background: var(--color-bg-secondary, #f7fafc);
+    border: 1px solid var(--color-border-light, #e2e8f0);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+}
+
+.table-of-contents h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+}
+
+.table-of-contents ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.table-of-contents li {
+    margin-bottom: 0.5rem;
+}
+
+.table-of-contents li.h3 {
+    margin-left: 1rem;
+    font-size: 0.9rem;
+}
+
+.table-of-contents a {
+    color: var(--color-text-secondary, #4a5568);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.table-of-contents a:hover {
+    color: var(--color-primary, #3182ce);
+}
+</style>

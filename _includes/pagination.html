@@ -1,0 +1,372 @@
+{% comment %}
+Pagination component for Jekyll sites
+Usage: {% include pagination.html %}
+
+Supports both Jekyll's built-in pagination and custom pagination
+Works with different page types (journal, blog, work)
+{% endcomment %}
+
+{% assign section = page.url | split: '/' | first %}
+{% if section == "" %}
+  {% assign section = page.url | split: '/' | slice: 1 | first %}
+{% endif %}
+
+{% if paginator %}
+  <!-- Jekyll built-in pagination -->
+  {% if paginator.total_pages > 1 %}
+  <nav class="pagination" role="navigation" aria-label="Pagination Navigation">
+    <!-- Previous page -->
+    {% if paginator.previous_page %}
+      <a href="{{ paginator.previous_page_path | relative_url }}" 
+         class="pagination-btn prev" 
+         rel="prev"
+         aria-label="Go to previous page">
+        ← Previous
+      </a>
+    {% else %}
+      <span class="pagination-btn prev" aria-disabled="true">← Previous</span>
+    {% endif %}
+
+    <!-- Page numbers -->
+    {% assign start_page = paginator.page | minus: 2 %}
+    {% assign end_page = paginator.page | plus: 2 %}
+    
+    {% if start_page < 1 %}
+      {% assign start_page = 1 %}
+      {% assign end_page = 5 %}
+    {% endif %}
+    
+    {% if end_page > paginator.total_pages %}
+      {% assign end_page = paginator.total_pages %}
+      {% assign start_page = paginator.total_pages | minus: 4 %}
+      {% if start_page < 1 %}
+        {% assign start_page = 1 %}
+      {% endif %}
+    {% endif %}
+
+    <!-- First page if not in range -->
+    {% if start_page > 1 %}
+      <a href="{{ paginator.first_page_path | relative_url }}" 
+         class="pagination-btn"
+         aria-label="Go to first page">1</a>
+      {% if start_page > 2 %}
+        <span class="pagination-ellipsis">…</span>
+      {% endif %}
+    {% endif %}
+
+    <!-- Page number range -->
+    {% for page_num in (start_page..end_page) %}
+      {% if page_num == paginator.page %}
+        <span class="pagination-btn active" aria-current="page" aria-label="Current page, page {{ page_num }}">
+          {{ page_num }}
+        </span>
+      {% else %}
+        {% if page_num == 1 %}
+          <a href="{{ paginator.first_page_path | relative_url }}" 
+             class="pagination-btn"
+             aria-label="Go to page {{ page_num }}">{{ page_num }}</a>
+        {% else %}
+          <a href="{{ site.paginate_path | replace: ':num', page_num | relative_url }}" 
+             class="pagination-btn"
+             aria-label="Go to page {{ page_num }}">{{ page_num }}</a>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    <!-- Last page if not in range -->
+    {% if end_page < paginator.total_pages %}
+      {% if end_page < paginator.total_pages | minus: 1 %}
+        <span class="pagination-ellipsis">…</span>
+      {% endif %}
+      <a href="{{ site.paginate_path | replace: ':num', paginator.total_pages | relative_url }}" 
+         class="pagination-btn"
+         aria-label="Go to last page">{{ paginator.total_pages }}</a>
+    {% endif %}
+
+    <!-- Next page -->
+    {% if paginator.next_page %}
+      <a href="{{ paginator.next_page_path | relative_url }}" 
+         class="pagination-btn next" 
+         rel="next"
+         aria-label="Go to next page">
+        Next →
+      </a>
+    {% else %}
+      <span class="pagination-btn next" aria-disabled="true">Next →</span>
+    {% endif %}
+  </nav>
+
+  <!-- Pagination info -->
+  <div class="pagination-info">
+    Showing 
+    {% if paginator.page == 1 %}
+      1
+    {% else %}
+      {{ paginator.per_page | times: paginator.page | minus: paginator.per_page | plus: 1 }}
+    {% endif %}
+    - 
+    {% if paginator.page == paginator.total_pages %}
+      {{ paginator.total_posts }}
+    {% else %}
+      {{ paginator.per_page | times: paginator.page }}
+    {% endif %}
+    of {{ paginator.total_posts }} 
+    {% if section == 'journal' %}
+      entries
+    {% elsif section == 'blog' %}
+      posts
+    {% elsif section == 'work' %}
+      projects
+    {% else %}
+      items
+    {% endif %}
+  </div>
+  {% endif %}
+
+{% else %}
+  <!-- Custom pagination for manual implementation -->
+  {% comment %}
+  This section can be used for custom pagination
+  when not using Jekyll's built-in paginator
+  {% endcomment %}
+  
+  {% if include.pages and include.pages.size > 1 %}
+  <nav class="pagination" role="navigation" aria-label="Pagination Navigation">
+    {% assign current_page = include.current_page | default: 1 %}
+    {% assign total_pages = include.total_pages %}
+    {% assign base_url = include.base_url | default: page.url %}
+    
+    <!-- Previous page -->
+    {% if current_page > 1 %}
+      {% assign prev_page = current_page | minus: 1 %}
+      {% if prev_page == 1 %}
+        <a href="{{ base_url | relative_url }}" 
+           class="pagination-btn prev" 
+           rel="prev"
+           aria-label="Go to previous page">
+          ← Previous
+        </a>
+      {% else %}
+        <a href="{{ base_url | append: 'page' | append: prev_page | relative_url }}" 
+           class="pagination-btn prev" 
+           rel="prev"
+           aria-label="Go to previous page">
+          ← Previous
+        </a>
+      {% endif %}
+    {% else %}
+      <span class="pagination-btn prev" aria-disabled="true">← Previous</span>
+    {% endif %}
+
+    <!-- Page numbers -->
+    {% for page_num in (1..total_pages) %}
+      {% if page_num == current_page %}
+        <span class="pagination-btn active" aria-current="page" aria-label="Current page, page {{ page_num }}">
+          {{ page_num }}
+        </span>
+      {% else %}
+        {% if page_num == 1 %}
+          <a href="{{ base_url | relative_url }}" 
+             class="pagination-btn"
+             aria-label="Go to page {{ page_num }}">{{ page_num }}</a>
+        {% else %}
+          <a href="{{ base_url | append: 'page' | append: page_num | relative_url }}" 
+             class="pagination-btn"
+             aria-label="Go to page {{ page_num }}">{{ page_num }}</a>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    <!-- Next page -->
+    {% if current_page < total_pages %}
+      {% assign next_page = current_page | plus: 1 %}
+      <a href="{{ base_url | append: 'page' | append: next_page | relative_url }}" 
+         class="pagination-btn next" 
+         rel="next"
+         aria-label="Go to next page">
+        Next →
+      </a>
+    {% else %}
+      <span class="pagination-btn next" aria-disabled="true">Next →</span>
+    {% endif %}
+  </nav>
+  {% endif %}
+{% endif %}
+
+<!-- Load more button (alternative pagination style) -->
+{% if include.load_more %}
+<div class="load-more-section">
+  <button class="btn btn-secondary load-more-btn" 
+          onclick="loadMoreContent()"
+          data-page="{{ include.current_page | default: 1 | plus: 1 }}"
+          data-section="{{ section }}">
+    Load More {{ section | capitalize }}
+  </button>
+</div>
+
+<script>
+function loadMoreContent() {
+  const button = document.querySelector('.load-more-btn');
+  const page = parseInt(button.dataset.page);
+  const section = button.dataset.section;
+  
+  // Show loading state
+  button.classList.add('loading');
+  button.disabled = true;
+  
+  // In a real implementation, this would make an AJAX request
+  // For now, we'll simulate it
+  setTimeout(() => {
+    console.log(`Loading page ${page} for section ${section}`);
+    
+    // Remove loading state
+    button.classList.remove('loading');
+    button.disabled = false;
+    
+    // Update page number
+    button.dataset.page = page + 1;
+    
+    // Hide button if no more content
+    if (page >= 5) { // Example: hide after 5 pages
+      button.style.display = 'none';
+    }
+  }, 1000);
+}
+</script>
+{% endif %}
+
+<style>
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 3rem 0;
+  flex-wrap: wrap;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--color-border-light, #e2e8f0);
+  background: var(--color-bg-primary, #ffffff);
+  color: var(--color-text-secondary, #4a5568);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.pagination-btn:hover:not([aria-disabled="true"]):not(.active) {
+  background: var(--color-bg-secondary, #f7fafc);
+  border-color: var(--color-border-medium, #cbd5e0);
+  color: var(--color-text-primary, #2d3748);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.pagination-btn.active {
+  background: var(--color-primary, #3182ce);
+  color: white;
+  border-color: var(--color-primary, #3182ce);
+  cursor: default;
+}
+
+.pagination-btn[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.pagination-btn.prev,
+.pagination-btn.next {
+  padding: 0 1rem;
+  font-weight: 500;
+}
+
+.pagination-ellipsis {
+  color: var(--color-text-muted, #718096);
+  padding: 0 0.25rem;
+  font-weight: 500;
+}
+
+.pagination-info {
+  text-align: center;
+  color: var(--color-text-muted, #718096);
+  font-size: 0.875rem;
+  margin-top: 1rem;
+}
+
+.load-more-section {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.load-more-btn.loading::after {
+  content: '';
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 0.5rem;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .pagination {
+    gap: 0.25rem;
+    margin: 2rem 0;
+  }
+  
+  .pagination-btn {
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding: 0 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  .pagination-btn.prev,
+  .pagination-btn.next {
+    padding: 0 0.75rem;
+  }
+  
+  .pagination-info {
+    font-size: 0.8rem;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .pagination-btn {
+    border-width: 2px;
+  }
+  
+  .pagination-btn.active {
+    border-width: 3px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .pagination-btn {
+    transition: none;
+  }
+  
+  .pagination-btn:hover {
+    transform: none;
+  }
+}
+</style>

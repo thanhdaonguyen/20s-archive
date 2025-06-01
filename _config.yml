@@ -1,0 +1,77 @@
+# Site settings
+title: "Thanhdao's Archive"
+description: "Personal archive for journal entries, technical blog posts, and research projects"
+author: "Thanhdao"
+email: your.email@example.com
+url: "https://thanhdaonguyen.github.io"
+baseurl: "/20s-archive"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: /:categories/:year/:month/:day/:title/
+
+# Jekyll plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-paginate
+
+# Pagination settings
+paginate: 10
+paginate_path: "/journal/page:num/"
+
+# Collections for different content types
+collections:
+  projects:
+    output: true
+    permalink: /work/:name/
+
+# Default layouts for different content types
+defaults:
+  - scope:
+      path: "journal/_posts"
+      type: "posts"
+    values:
+      layout: "journal"
+      category: "journal"
+  - scope:
+      path: "blog/_posts"
+      type: "posts"
+    values:
+      layout: "blog-post"
+      category: "blog"
+  - scope:
+      path: "_projects"
+      type: "projects"
+    values:
+      layout: "project"
+
+# Sass configuration
+sass:
+  sass_dir: _sass
+  style: compressed
+
+# Exclude from build
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+
+# Social media and contact
+social:
+  github: thanhdaonguyen
+  linkedin: thanhdaonguyen
+  email: daofepvbvhn@gmail.com
+
+# SEO settings
+logo: /assets/images/logo.png
+twitter:
+  username: yourusername
+  card: summary
+
+# Google Analytics (optional)
+# google_analytics: UA-XXXXXXXX-X

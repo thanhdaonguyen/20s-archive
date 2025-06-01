@@ -1,0 +1,573 @@
+---
+layout: default
+---
+
+<article class="project-page" itemscope itemtype="http://schema.org/CreativeWork">
+    <header class="project-header">
+        {% if page.type %}
+        <div class="project-type">{{ page.type }}</div>
+        {% endif %}
+        
+        <h1 class="project-title" itemprop="name">{{ page.title }}</h1>
+        
+        {% if page.subtitle %}
+        <p class="project-subtitle" itemprop="description">{{ page.subtitle }}</p>
+        {% endif %}
+        
+        <div class="project-meta">
+            {% if page.date %}
+            <div class="project-meta-item">
+                <span class="meta-label">Completed:</span>
+                <time datetime="{{ page.date | date_to_xmlschema }}" itemprop="dateCreated">
+                    {{ page.date | date: "%B %Y" }}
+                </time>
+            </div>
+            {% endif %}
+            
+            {% if page.duration %}
+            <div class="project-meta-item">
+                <span class="meta-label">Duration:</span>
+                {{ page.duration }}
+            </div>
+            {% endif %}
+            
+            {% if page.team_size %}
+            <div class="project-meta-item">
+                <span class="meta-label">Team Size:</span>
+                {{ page.team_size }}
+            </div>
+            {% endif %}
+            
+            {% if page.role %}
+            <div class="project-meta-item">
+                <span class="meta-label">My Role:</span>
+                {{ page.role }}
+            </div>
+            {% endif %}
+            
+            {% if page.status %}
+            <div class="project-meta-item">
+                <span class="meta-label">Status:</span>
+                <span class="status status-{{ page.status | slugify }}">{{ page.status }}</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if page.links or page.github_url or page.demo_url or page.paper_url %}
+        <div class="project-actions">
+            {% if page.demo_url %}
+            <a href="{{ page.demo_url }}" class="project-action primary" target="_blank" rel="noopener">
+                🚀 Live Demo
+            </a>
+            {% endif %}
+            
+            {% if page.github_url %}
+            <a href="{{ page.github_url }}" class="project-action secondary" target="_blank" rel="noopener">
+                📂 Source Code
+            </a>
+            {% endif %}
+            
+            {% if page.paper_url %}
+            <a href="{{ page.paper_url }}" class="project-action secondary" target="_blank" rel="noopener">
+                📄 Research Paper
+            </a>
+            {% endif %}
+            
+            {% if page.links %}
+            {% for link in page.links %}
+            <a href="{{ link.url }}" class="project-action secondary" target="_blank" rel="noopener">
+                {{ link.icon | default: "🔗" }} {{ link.title }}
+            </a>
+            {% endfor %}
+            {% endif %}
+        </div>
+        {% endif %}
+    </header>
+
+    {% if page.featured_image %}
+    <div class="project-featured-image">
+        <img src="{{ page.featured_image.url | relative_url }}" 
+             alt="{{ page.featured_image.alt | default: page.title }}" 
+             loading="eager"
+             itemprop="image">
+        {% if page.featured_image.caption %}
+        <div class="image-caption">{{ page.featured_image.caption }}</div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="project-content">
+        <!-- Overview Section -->
+        {% if page.overview or content contains "## Overview" == false %}
+        <section class="content-section">
+            <h2 class="section-title">Overview</h2>
+            {% if page.overview %}
+                <p>{{ page.overview }}</p>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        <!-- Technical Specifications -->
+        {% if page.tech_stack or page.technologies %}
+        <section class="content-section">
+            <h2 class="section-title">Technical Specifications</h2>
+            <div class="tech-specs">
+                <div class="specs-title">Technologies Used</div>
+                <div class="specs-grid">
+                    {% assign technologies = page.tech_stack | default: page.technologies %}
+                    {% for tech_category in technologies %}
+                    <div class="spec-item">
+                        <div class="spec-label">{{ tech_category[0] | replace: "_", " " | capitalize }}</div>
+                        <div class="spec-value">
+                            {% if tech_category[1].first %}
+                                {{ tech_category[1] | join: ", " }}
+                            {% else %}
+                                {{ tech_category[1] }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Main Content -->
+        <div class="main-content-section">
+            {{ content }}
+        </div>
+
+        <!-- Results/Outcomes -->
+        {% if page.results or page.outcomes %}
+        <section class="content-section">
+            <h2 class="section-title">Results & Impact</h2>
+            <div class="results-section">
+                {% if page.results.description %}
+                <p>{{ page.results.description }}</p>
+                {% endif %}
+                
+                {% if page.results.metrics or page.outcomes.metrics %}
+                <div class="results-grid">
+                    {% assign metrics = page.results.metrics | default: page.outcomes.metrics %}
+                    {% for metric in metrics %}
+                    <div class="result-metric">
+                        <span class="metric-value">{{ metric.value }}</span>
+                        <span class="metric-label">{{ metric.label }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                {% if page.results.achievements %}
+                <ul>
+                    {% for achievement in page.results.achievements %}
+                    <li>{{ achievement }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Gallery -->
+        {% if page.gallery and page.gallery.size > 0 %}
+        <section class="content-section">
+            <h2 class="section-title">Gallery</h2>
+            <div class="image-gallery">
+                {% for image in page.gallery %}
+                <img src="{{ image.url | relative_url }}" 
+                     alt="{{ image.alt | default: 'Project screenshot' }}" 
+                     class="gallery-image"
+                     loading="lazy">
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Challenges & Solutions -->
+        {% if page.challenges %}
+        <section class="content-section">
+            <h2 class="section-title">Challenges & Solutions</h2>
+            {% for challenge in page.challenges %}
+            <div class="challenge-item">
+                <h3>{{ challenge.title }}</h3>
+                <div class="challenge-description">
+                    <strong>Challenge:</strong> {{ challenge.problem }}
+                </div>
+                <div class="challenge-solution">
+                    <strong>Solution:</strong> {{ challenge.solution }}
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+        {% endif %}
+
+        <!-- Lessons Learned -->
+        {% if page.lessons_learned %}
+        <section class="content-section">
+            <h2 class="section-title">Lessons Learned</h2>
+            <ul>
+                {% for lesson in page.lessons_learned %}
+                <li>{{ lesson }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+    </div>
+</article>
+
+<!-- Project navigation -->
+<nav class="project-navigation">
+    {% assign projects = site.projects | sort: 'date' | reverse %}
+    {% assign current_index = 0 %}
+    {% for project in projects %}
+        {% if project.url == page.url %}
+            {% assign current_index = forloop.index0 %}
+            {% break %}
+        {% endif %}
+    {% endfor %}
+    
+    {% assign prev_index = current_index | plus: 1 %}
+    {% assign next_index = current_index | minus: 1 %}
+    
+    {% if projects[prev_index] %}
+    <a href="{{ projects[prev_index].url | relative_url }}" class="nav-project prev" rel="prev">
+        <div class="nav-label">Previous Project</div>
+        <div class="nav-title">{{ projects[prev_index].title }}</div>
+    </a>
+    {% endif %}
+    
+    {% if projects[next_index] %}
+    <a href="{{ projects[next_index].url | relative_url }}" class="nav-project next" rel="next">
+        <div class="nav-label">Next Project</div>
+        <div class="nav-title">{{ projects[next_index].title }}</div>
+    </a>
+    {% endif %}
+</nav>
+
+<!-- Back to work archive -->
+<div class="text-center" style="margin-top: 3rem;">
+    <a href="{{ '/work' | relative_url }}" class="btn btn-secondary">
+        ← Back to Work Archive
+    </a>
+</div>
+
+<!-- Schema.org structured data -->
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "CreativeWork",
+    "name": "{{ page.title | escape }}",
+    "description": "{{ page.subtitle | default: page.overview | default: content | strip_html | truncate: 160 | escape }}",
+    "dateCreated": "{{ page.date | date_to_xmlschema }}",
+    "creator": {
+        "@type": "Person",
+        "name": "{{ site.author }}"
+    }
+    {% if page.featured_image %},
+    "image": {
+        "@type": "ImageObject",
+        "url": "{{ page.featured_image.url | absolute_url }}"
+    }
+    {% endif %}
+    {% if page.github_url %},
+    "codeRepository": "{{ page.github_url }}"
+    {% endif %}
+    {% if page.demo_url %},
+    "url": "{{ page.demo_url }}"
+    {% endif %}
+    {% if page.tech_stack %},
+    "programmingLanguage": [
+        {% for tech_category in page.tech_stack %}
+            {% if tech_category[0] == "languages" or tech_category[0] == "programming_languages" %}
+                {% for lang in tech_category[1] %}
+                "{{ lang | escape }}"{% unless forloop.last %},{% endunless %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    ]
+    {% endif %}
+}
+</script>
+
+<script>
+// Project page specific JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize image gallery for project images
+    if (window.Gallery && (document.querySelector('.gallery-image') || document.querySelector('.project-featured-image img'))) {
+        window.Gallery.init();
+    }
+    
+    // Add smooth scrolling for internal links
+    addSmoothScrolling();
+    
+    // Initialize project-specific features
+    initProjectFeatures();
+    
+    // Add copy to clipboard for code blocks
+    addCodeCopyButtons();
+});
+
+function initProjectFeatures() {
+    // Animate metrics on scroll
+    const metrics = document.querySelectorAll('.result-metric');
+    if (metrics.length > 0 && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateMetric(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        });
+        
+        metrics.forEach(metric => observer.observe(metric));
+    }
+    
+    // Add tech stack filtering
+    const techTags = document.querySelectorAll('.tech-tag');
+    techTags.forEach(tag => {
+        tag.addEventListener('click', function() {
+            const tech = this.textContent.trim();
+            window.open(`https://www.google.com/search?q=${encodeURIComponent(tech + ' documentation')}`, '_blank');
+        });
+    });
+    
+    // Enhanced project action tracking
+    const projectActions = document.querySelectorAll('.project-action');
+    projectActions.forEach(action => {
+        action.addEventListener('click', function() {
+            const actionType = this.textContent.trim();
+            console.log(`Project action clicked: ${actionType}`);
+            // Add analytics tracking here if needed
+        });
+    });
+}
+
+function animateMetric(metricElement) {
+    const valueElement = metricElement.querySelector('.metric-value');
+    const finalValue = valueElement.textContent;
+    
+    // Extract number from the value
+    const numberMatch = finalValue.match(/[\d.]+/);
+    if (numberMatch) {
+        const number = parseFloat(numberMatch[0]);
+        const suffix = finalValue.replace(numberMatch[0], '');
+        
+        let current = 0;
+        const increment = number / 30; // Animate over 30 frames
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= number) {
+                current = number;
+                clearInterval(timer);
+            }
+            valueElement.textContent = Math.floor(current) + suffix;
+        }, 50);
+    }
+}
+
+function addSmoothScrolling() {
+    const links = document.querySelectorAll('a[href^="#"]');
+    links.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+}
+
+function addCodeCopyButtons() {
+    const codeBlocks = document.querySelectorAll('pre code');
+    codeBlocks.forEach((codeBlock, index) => {
+        const pre = codeBlock.parentNode;
+        const button = document.createElement('button');
+        button.className = 'code-copy-btn';
+        button.textContent = 'Copy';
+        button.setAttribute('data-index', index);
+        
+        button.addEventListener('click', function() {
+            navigator.clipboard.writeText(codeBlock.textContent).then(() => {
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                }, 2000);
+            });
+        });
+        
+        pre.style.position = 'relative';
+        pre.appendChild(button);
+    });
+}
+
+// Share project functionality
+function shareProject(platform) {
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent(document.title);
+    const text = encodeURIComponent('Check out this project: ' + document.title);
+    
+    switch(platform) {
+        case 'twitter':
+            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+            break;
+        case 'linkedin':
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
+            break;
+        case 'copy':
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Project link copied to clipboard!');
+            });
+            break;
+    }
+}
+</script>
+
+<style>
+/* Project-specific styles */
+.challenge-item {
+    background: var(--color-bg-secondary, #f7fafc);
+    border-left: 4px solid var(--color-warning, #ed8936);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0 8px 8px 0;
+}
+
+.challenge-item h3 {
+    color: var(--color-text-primary, #2d3748);
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+}
+
+.challenge-description,
+.challenge-solution {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.challenge-description {
+    color: var(--color-text-secondary, #4a5568);
+}
+
+.challenge-solution {
+    color: var(--color-text-secondary, #4a5568);
+}
+
+.code-copy-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.code-copy-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.tech-tag {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tech-tag:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.result-metric {
+    transition: transform 0.3s ease;
+}
+
+.result-metric:hover {
+    transform: scale(1.05);
+}
+
+.project-action {
+    transition: all 0.2s ease;
+}
+
+.project-action:hover {
+    transform: translateY(-2px);
+}
+
+/* Responsive adjustments for project pages */
+@media (max-width: 768px) {
+    .project-meta {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: left;
+    }
+    
+    .project-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .project-action {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .specs-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .results-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .image-gallery {
+        grid-template-columns: 1fr;
+    }
+    
+    .project-navigation {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .code-copy-btn {
+        position: static;
+        display: block;
+        margin-top: 0.5rem;
+        margin-left: auto;
+        width: fit-content;
+    }
+}
+
+/* Print styles for projects */
+@media print {
+    .project-actions,
+    .project-navigation,
+    .code-copy-btn {
+        display: none !important;
+    }
+    
+    .project-featured-image,
+    .image-gallery img {
+        max-width: 100% !important;
+        height: auto !important;
+        break-inside: avoid;
+    }
+    
+    .challenge-item,
+    .tech-specs,
+    .results-section {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
+</style>

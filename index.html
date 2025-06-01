@@ -1,0 +1,247 @@
+---
+layout: default
+title: "Home"
+description: "Personal archive for journal entries, technical blog posts, and research projects"
+---
+
+<section class="homepage-hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">Welcome to {{ site.title }}</h1>
+            <p class="hero-description">{{ site.description }}</p>
+            
+            <div class="hero-stats">
+                {% assign journal_count = site.posts | where: "categories", "journal" | size %}
+                {% assign blog_count = site.posts | where: "categories", "blog" | size %}
+                {% assign work_count = site.projects | size %}
+                
+                <div class="stat-item">
+                    <span class="stat-number">{{ journal_count }}</span>
+                    <span class="stat-label">Journal Entries</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ blog_count }}</span>
+                    <span class="stat-label">Blog Posts</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ work_count }}</span>
+                    <span class="stat-label">Projects</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="homepage-sections">
+    <div class="container">
+        <div class="sections-grid">
+            <!-- Journal Section -->
+            <div class="section-card journal-card">
+                <div class="section-icon">📔</div>
+                <h2 class="section-title">Journal</h2>
+                <p class="section-description">
+                    Daily thoughts, experiences, and moments worth remembering. A personal space for reflection and documentation of life's journey.
+                </p>
+                
+                {% assign recent_journal = site.posts | where: "categories", "journal" | first %}
+                {% if recent_journal %}
+                <div class="section-preview">
+                    <div class="preview-label">Latest Entry:</div>
+                    <div class="preview-title">{{ recent_journal.title | default: recent_journal.date | date: "%B %d, %Y" }}</div>
+                    <div class="preview-date">{{ recent_journal.date | date: "%B %d, %Y" }}</div>
+                </div>
+                {% endif %}
+                
+                <a href="{{ '/journal' | relative_url }}" class="section-link">
+                    Explore Journal →
+                </a>
+            </div>
+
+            <!-- Blog Section -->
+            <div class="section-card blog-card">
+                <div class="section-icon">📝</div>
+                <h2 class="section-title">Blog</h2>
+                <p class="section-description">
+                    In-depth articles on deep learning, systems programming, and technical insights. Sharing knowledge and experiences from the world of technology.
+                </p>
+                
+                {% assign recent_blog = site.posts | where: "categories", "blog" | first %}
+                {% if recent_blog %}
+                <div class="section-preview">
+                    <div class="preview-label">Latest Post:</div>
+                    <div class="preview-title">{{ recent_blog.title }}</div>
+                    <div class="preview-date">{{ recent_blog.date | date: "%B %d, %Y" }}</div>
+                </div>
+                {% endif %}
+                
+                <a href="{{ '/blog' | relative_url }}" class="section-link">
+                    Read Blog →
+                </a>
+            </div>
+
+            <!-- Work Section -->
+            <div class="section-card work-card">
+                <div class="section-icon">💼</div>
+                <h2 class="section-title">Work</h2>
+                <p class="section-description">
+                    Research projects, open source contributions, and professional accomplishments. A showcase of technical expertise and innovation.
+                </p>
+                
+                {% assign recent_project = site.projects | sort: 'date' | reverse | first %}
+                {% if recent_project %}
+                <div class="section-preview">
+                    <div class="preview-label">Latest Project:</div>
+                    <div class="preview-title">{{ recent_project.title }}</div>
+                    <div class="preview-date">{{ recent_project.date | date: "%B %Y" }}</div>
+                </div>
+                {% endif %}
+                
+                <a href="{{ '/work' | relative_url }}" class="section-link">
+                    View Work →
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recent highlights -->
+<section class="homepage-highlights">
+    <div class="container">
+        <h2 class="highlights-title">Recent Highlights</h2>
+        
+        <div class="highlights-grid">
+            <!-- Recent journal entries -->
+            {% assign recent_journals = site.posts | where: "categories", "journal" | limit: 2 %}
+            {% for entry in recent_journals %}
+            <article class="highlight-card journal-highlight">
+                <div class="highlight-type">Journal</div>
+                <h3 class="highlight-title">
+                    <a href="{{ entry.url | relative_url }}">
+                        {{ entry.title | default: entry.date | date: "%B %d, %Y" }}
+                    </a>
+                </h3>
+                <div class="highlight-excerpt">
+                    {{ entry.excerpt | strip_html | truncate: 120 }}
+                </div>
+                <div class="highlight-date">{{ entry.date | date: "%B %d, %Y" }}</div>
+            </article>
+            {% endfor %}
+            
+            <!-- Recent blog posts -->
+            {% assign recent_blogs = site.posts | where: "categories", "blog" | limit: 2 %}
+            {% for post in recent_blogs %}
+            <article class="highlight-card blog-highlight">
+                <div class="highlight-type">Blog</div>
+                <h3 class="highlight-title">
+                    <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+                </h3>
+                <div class="highlight-excerpt">
+                    {{ post.excerpt | strip_html | truncate: 120 }}
+                </div>
+                <div class="highlight-date">{{ post.date | date: "%B %d, %Y" }}</div>
+            </article>
+            {% endfor %}
+            
+            <!-- Recent projects -->
+            {% assign recent_projects = site.projects | sort: 'date' | reverse | limit: 2 %}
+            {% for project in recent_projects %}
+            <article class="highlight-card work-highlight">
+                <div class="highlight-type">Project</div>
+                <h3 class="highlight-title">
+                    <a href="{{ project.url | relative_url }}">{{ project.title }}</a>
+                </h3>
+                <div class="highlight-excerpt">
+                    {{ project.subtitle | default: project.overview | truncate: 120 }}
+                </div>
+                <div class="highlight-date">{{ project.date | date: "%B %Y" }}</div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="homepage-cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2 class="cta-title">Let's Connect</h2>
+            <p class="cta-description">
+                Interested in collaborating on deep learning research, discussing technical challenges, 
+                or just saying hello? I'd love to hear from you.
+            </p>
+            <div class="cta-actions">
+                {% if site.social.email %}
+                <a href="mailto:{{ site.social.email }}" class="cta-btn primary">
+                    📧 Get in Touch
+                </a>
+                {% endif %}
+                {% if site.social.github %}
+                <a href="https://github.com/{{ site.social.github }}" class="cta-btn secondary" target="_blank" rel="noopener">
+                    💻 GitHub
+                </a>
+                {% endif %}
+                {% if site.social.linkedin %}
+                <a href="https://linkedin.com/in/{{ site.social.linkedin }}" class="cta-btn secondary" target="_blank" rel="noopener">
+                    💼 LinkedIn
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Homepage interactivity
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate stats on scroll
+    const stats = document.querySelectorAll('.stat-number');
+    if (stats.length > 0 && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateNumber(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        });
+        
+        stats.forEach(stat => observer.observe(stat));
+    }
+    
+    // Add click handlers to section cards
+    const sectionCards = document.querySelectorAll('.section-card');
+    sectionCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const link = this.querySelector('.section-link');
+            if (link) {
+                window.location.href = link.href;
+            }
+        });
+        
+        // Add keyboard support
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'button');
+        card.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+    });
+});
+
+function animateNumber(element) {
+    const finalNumber = parseInt(element.textContent);
+    let currentNumber = 0;
+    const increment = Math.ceil(finalNumber / 30);
+    
+    const timer = setInterval(() => {
+        currentNumber += increment;
+        if (currentNumber >= finalNumber) {
+            currentNumber = finalNumber;
+            clearInterval(timer);
+        }
+        element.textContent = currentNumber;
+    }, 50);
+}
+</script>

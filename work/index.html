@@ -1,0 +1,1466 @@
+---
+layout: default
+title: "Work"
+description: "Research projects, open source contributions, and professional accomplishments"
+permalink: /work/
+---
+
+<div class="work-page">
+    <header class="section-header">
+        <h1 class="section-title">Work</h1>
+        <p class="section-description">
+            Research projects, open source contributions, and professional accomplishments. 
+            A showcase of technical expertise and innovation in deep learning and systems programming.
+        </p>
+    </header>
+
+    <!-- Work Statistics -->
+    {% assign all_projects = site.projects | sort: 'date' | reverse %}
+    {% assign completed_projects = all_projects | where: "status", "Completed" %}
+    {% assign in_progress_projects = all_projects | where: "status", "In Progress" %}
+    {% assign open_source_projects = all_projects | where: "type", "Open Source" %}
+    
+    <div class="work-stats">
+        <div class="stats-title">Portfolio Overview</div>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-number">{{ all_projects.size }}</span>
+                <span class="stat-label">Total Projects</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ completed_projects.size }}</span>
+                <span class="stat-label">Completed</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ in_progress_projects.size }}</span>
+                <span class="stat-label">In Progress</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ open_source_projects.size }}</span>
+                <span class="stat-label">Open Source</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Work Filters -->
+    {% assign all_types = all_projects | map: "type" | uniq | compact %}
+    {% assign all_technologies = all_projects | map: "tech_stack" | map: "languages" | join: "," | split: "," | uniq | compact %}
+    {% assign all_statuses = all_projects | map: "status" | uniq | compact %}
+    
+    <div class="work-filters">
+        <button class="work-filter active" data-filter="all" data-type="all">
+            All Projects
+            <span class="count">({{ all_projects.size }})</span>
+        </button>
+        
+        <div class="filter-group">
+            <span class="filter-group-label">Type:</span>
+            {% for type in all_types %}
+            {% assign type_projects = all_projects | where: "type", type %}
+            <button class="work-filter" data-filter="{{ type | slugify }}" data-type="project-type">
+                {{ type }}
+                <span class="count">({{ type_projects.size }})</span>
+            </button>
+            {% endfor %}
+        </div>
+        
+        <div class="filter-group">
+            <span class="filter-group-label">Status:</span>
+            {% for status in all_statuses %}
+            {% assign status_projects = all_projects | where: "status", status %}
+            <button class="work-filter" data-filter="{{ status | slugify }}" data-type="status">
+                {{ status }}
+                <span class="count">({{ status_projects.size }})</span>
+            </button>
+            {% endfor %}
+        </div>
+        
+        <div class="filter-group">
+            <span class="filter-group-label">Tech:</span>
+            {% for tech in all_technologies limit: 6 %}
+            {% if tech and tech != "" %}
+            {% assign tech_projects = all_projects | where_exp: "project", "project.tech_stack.languages contains tech" %}
+            <button class="work-filter tech-filter" data-filter="{{ tech | slugify }}" data-type="technology">
+                {{ tech }}
+                <span class="count">({{ tech_projects.size }})</span>
+            </button>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Featured Projects -->
+    {% assign featured_projects = all_projects | where: "featured", true | limit: 2 %}
+    {% if featured_projects.size > 0 %}
+    <section class="featured-projects">
+        <h2 class="featured-title">Featured Projects</h2>
+        <div class="featured-projects-grid">
+            {% for project in featured_projects %}
+            <article class="featured-project-card" 
+                     data-type="{{ project.type | slugify }}"
+                     data-status="{{ project.status | slugify }}"
+                     data-technologies="{% if project.tech_stack.languages %}{% for tech in project.tech_stack.languages %}{{ tech | slugify }} {% endfor %}{% endif %}">
+                
+                {% if project.featured_image %}
+                <div class="featured-project-image">
+                    <img src="{{ project.featured_image.url | relative_url }}" 
+                         alt="{{ project.featured_image.alt | default: project.title }}"
+                         loading="lazy"
+                         itemprop="image">
+                    
+                    <div class="project-overlay">
+                        <span class="project-type-badge">{{ project.type }}</span>
+                        <span class="project-status-badge status-{{ project.status | slugify }}">{{ project.status }}</span>
+                    </div>
+                </div>
+                {% else %}
+                <div class="project-card-image-placeholder">
+                    <div class="placeholder-content">
+                        <span class="placeholder-icon">💼</span>
+                        <span class="placeholder-type">{{ project.type | default: "Project" }}</span>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="featured-project-content">
+                    <h3 class="featured-project-title">
+                        <a href="{{ project.url | relative_url }}">{{ project.title }}</a>
+                    </h3>
+                    
+                    <p class="featured-project-description">
+                        {{ project.subtitle | default: project.overview | truncate: 180 }}
+                    </p>
+                    
+                    {% if project.tech_stack.languages %}
+                    <div class="featured-tech-stack">
+                        {% for tech in project.tech_stack.languages limit: 4 %}
+                        <span class="tech-badge">{{ tech }}</span>
+                        {% endfor %}
+                        {% if project.tech_stack.languages.size > 4 %}
+                        <span class="tech-more">+{{ project.tech_stack.languages.size | minus: 4 }}</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="featured-project-actions">
+                        {% if project.demo_url %}
+                        <a href="{{ project.demo_url }}" class="project-link demo" target="_blank" rel="noopener">
+                            🚀 Live Demo
+                        </a>
+                        {% endif %}
+                        {% if project.github_url %}
+                        <a href="{{ project.github_url }}" class="project-link github" target="_blank" rel="noopener">
+                            📂 Source
+                        </a>
+                        {% endif %}
+                        {% if project.paper_url %}
+                        <a href="{{ project.paper_url }}" class="project-link paper" target="_blank" rel="noopener">
+                            📄 Paper
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Projects Archive -->
+    <section class="work-archive-section">
+        <div class="archive-header">
+            <h2 class="archive-title">All Projects</h2>
+            <div class="archive-controls">
+                <div class="sort-controls">
+                    <label for="workSortBy">Sort by:</label>
+                    <select id="workSortBy" class="sort-select">
+                        <option value="date-desc">Newest First</option>
+                        <option value="date-asc">Oldest First</option>
+                        <option value="title-asc">Title A-Z</option>
+                        <option value="title-desc">Title Z-A</option>
+                        <option value="status">Status</option>
+                    </select>
+                </div>
+                
+                <div class="view-controls">
+                    <button class="view-btn active" data-view="grid" title="Grid view">
+                        ⚏
+                    </button>
+                    <button class="view-btn" data-view="list" title="List view">
+                        ☰
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="work-archive grid-view" id="workArchive">
+            {% for project in all_projects %}
+            <article class="project-card" 
+                     data-type="{{ project.type | slugify }}"
+                     data-status="{{ project.status | slugify }}"
+                     data-technologies="{% if project.tech_stack.languages %}{% for tech in project.tech_stack.languages %}{{ tech | slugify }} {% endfor %}{% endif %}"
+                     data-date="{{ project.date | date: '%Y-%m-%d' }}"
+                     data-title="{{ project.title | slugify }}"
+                     data-url="{{ project.url | relative_url }}"
+                     itemscope itemtype="http://schema.org/CreativeWork">
+                
+                {% if project.featured_image %}
+                <div class="project-card-image-container">
+                    <img src="{{ project.featured_image.url | relative_url }}" 
+                         alt="{{ project.featured_image.alt | default: project.title }}" 
+                         class="project-card-image"
+                         loading="lazy"
+                         itemprop="image">
+                    
+                    <div class="project-card-overlay">
+                        <span class="project-status status-{{ project.status | slugify }}">{{ project.status }}</span>
+                        {% if project.featured %}
+                        <span class="featured-badge">Featured</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="project-card-image-placeholder">
+                    <div class="placeholder-content">
+                        <span class="placeholder-icon">💼</span>
+                        <span class="placeholder-type">{{ project.type | default: "Project" }}</span>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="project-card-content">
+                    <div class="project-type">{{ project.type }}</div>
+                    
+                    <h3 class="project-card-title" itemprop="name">
+                        <a href="{{ project.url | relative_url }}">{{ project.title }}</a>
+                    </h3>
+                    
+                    <p class="project-card-description" itemprop="description">
+                        {{ project.subtitle | default: project.overview | truncate: 120 }}
+                    </p>
+                    
+                    {% if project.tech_stack %}
+                    <div class="project-tech-stack">
+                        <div class="tech-title">Tech Stack</div>
+                        <div class="tech-list">
+                            {% if project.tech_stack.languages %}
+                                {% for tech in project.tech_stack.languages limit: 3 %}
+                                <span class="tech-tag">{{ tech }}</span>
+                                {% endfor %}
+                                {% if project.tech_stack.languages.size > 3 %}
+                                <span class="tech-more">+{{ project.tech_stack.languages.size | minus: 3 }}</span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="project-card-footer">
+                        <div class="project-links">
+                            {% if project.demo_url %}
+                            <a href="{{ project.demo_url }}" class="project-link demo" target="_blank" rel="noopener" title="Live Demo">
+                                🚀
+                            </a>
+                            {% endif %}
+                            {% if project.github_url %}
+                            <a href="{{ project.github_url }}" class="project-link github" target="_blank" rel="noopener" title="Source Code">
+                                📂
+                            </a>
+                            {% endif %}
+                            {% if project.paper_url %}
+                            <a href="{{ project.paper_url }}" class="project-link paper" target="_blank" rel="noopener" title="Research Paper">
+                                📄
+                            </a>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="project-card-date">
+                            <time datetime="{{ project.date | date_to_xmlschema }}" itemprop="dateCreated">
+                                {{ project.date | date: "%b %Y" }}
+                            </time>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+            
+            {% if all_projects.size == 0 %}
+            <div class="work-empty">
+                <div class="empty-icon">💼</div>
+                <h2 class="empty-title">No Projects Yet</h2>
+                <p class="empty-description">
+                    Check back soon for updates on research projects and technical contributions.
+                </p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- No results message -->
+        <div class="no-results" style="display: none;">
+            <div class="empty-icon">🔍</div>
+            <h3>No projects found</h3>
+            <p>Try adjusting your filters to see more projects.</p>
+            <button class="btn btn-secondary clear-filters-btn">Clear All Filters</button>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="work-cta">
+        <div class="cta-content">
+            <h3 class="cta-title">Interested in Collaboration?</h3>
+            <p class="cta-description">
+                I'm always open to discussing new opportunities, research collaborations, 
+                and challenging technical problems in deep learning and systems programming.
+            </p>
+            <div class="cta-actions">
+                {% if site.social.email %}
+                <a href="mailto:{{ site.social.email }}" class="cta-btn primary">
+                    📧 Get in Touch
+                </a>
+                {% endif %}
+                {% if site.social.github %}
+                <a href="https://github.com/{{ site.social.github }}" class="cta-btn secondary" target="_blank" rel="noopener">
+                    📂 View GitHub
+                </a>
+                {% endif %}
+                {% if site.social.linkedin %}
+                <a href="https://linkedin.com/in/{{ site.social.linkedin }}" class="cta-btn secondary" target="_blank" rel="noopener">
+                    💼 LinkedIn
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+// Work archive functionality
+document.addEventListener('DOMContentLoaded', function() {
+    initWorkFilters();
+    initWorkSorting();
+    initWorkViewToggle();
+    initWorkActions();
+    animateStats();
+});
+
+function initWorkFilters() {
+    const filterBtns = document.querySelectorAll('.work-filter');
+    const projectCards = document.querySelectorAll('.project-card');
+    const featuredCards = document.querySelectorAll('.featured-project-card');
+    
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Update active button within the same group
+            if (this.dataset.type === 'all') {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            } else {
+                // Remove active from same type filters
+                const sameTypeFilters = document.querySelectorAll(`[data-type="${this.dataset.type}"]`);
+                sameTypeFilters.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Remove active from "all" button
+                document.querySelector('[data-filter="all"]').classList.remove('active');
+            }
+            
+            applyFilters();
+        });
+    });
+}
+
+function applyFilters() {
+    const activeFilters = {
+        type: getActiveFilter('project-type'),
+        status: getActiveFilter('status'),
+        technology: getActiveFilter('technology'),
+        all: document.querySelector('[data-filter="all"].active') !== null
+    };
+    
+    const projectCards = document.querySelectorAll('.project-card');
+    const featuredCards = document.querySelectorAll('.featured-project-card');
+    const allCards = [...projectCards, ...featuredCards];
+    
+    allCards.forEach(card => {
+        let show = activeFilters.all;
+        
+        if (!show) {
+            show = true;
+            
+            // Check type filter
+            if (activeFilters.type && !card.dataset.type.includes(activeFilters.type)) {
+                show = false;
+            }
+            
+            // Check status filter
+            if (activeFilters.status && !card.dataset.status.includes(activeFilters.status)) {
+                show = false;
+            }
+            
+            // Check technology filter
+            if (activeFilters.technology && !card.dataset.technologies.includes(activeFilters.technology)) {
+                show = false;
+            }
+        }
+        
+        card.style.display = show ? 'block' : 'none';
+    });
+    
+    // Show/hide no results message
+    const visibleCards = allCards.filter(card => card.style.display !== 'none');
+    const noResults = document.querySelector('.no-results');
+    noResults.style.display = visibleCards.length === 0 ? 'block' : 'none';
+    
+    // Update counts
+    updateFilterCounts(visibleCards.length);
+}
+
+function getActiveFilter(type) {
+    const activeBtn = document.querySelector(`[data-type="${type}"].active`);
+    return activeBtn ? activeBtn.dataset.filter : null;
+}
+
+function initWorkSorting() {
+    const sortSelect = document.getElementById('workSortBy');
+    const workArchive = document.getElementById('workArchive');
+    
+    if (!sortSelect || !workArchive) return;
+    
+    sortSelect.addEventListener('change', function() {
+        const sortBy = this.value;
+        const cards = Array.from(workArchive.querySelectorAll('.project-card'));
+        
+        cards.sort((a, b) => {
+            switch(sortBy) {
+                case 'date-desc':
+                    return new Date(b.dataset.date) - new Date(a.dataset.date);
+                case 'date-asc':
+                    return new Date(a.dataset.date) - new Date(b.dataset.date);
+                case 'title-asc':
+                    return a.dataset.title.localeCompare(b.dataset.title);
+                case 'title-desc':
+                    return b.dataset.title.localeCompare(a.dataset.title);
+                case 'status':
+                    const statusOrder = { 'completed': 0, 'in-progress': 1, 'archived': 2 };
+                    return (statusOrder[a.dataset.status] || 3) - (statusOrder[b.dataset.status] || 3);
+                default:
+                    return 0;
+            }
+        });
+        
+        // Re-append sorted cards
+        cards.forEach(card => workArchive.appendChild(card));
+    });
+}
+
+function initWorkViewToggle() {
+    const viewBtns = document.querySelectorAll('.view-btn');
+    const workArchive = document.getElementById('workArchive');
+    
+    if (!workArchive) return;
+    
+    viewBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            viewBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            const view = this.dataset.view;
+            
+            if (view === 'grid') {
+                workArchive.className = 'work-archive grid-view';
+            } else {
+                workArchive.className = 'work-archive list-view';
+            }
+        });
+    });
+}
+
+function initWorkActions() {
+    // Clear filters button
+    const clearFiltersBtn = document.querySelector('.clear-filters-btn');
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', function() {
+            // Reset all filters
+            const filterBtns = document.querySelectorAll('.work-filter');
+            filterBtns.forEach(btn => btn.classList.remove('active'));
+            
+            // Activate "all" filter
+            const allFilter = document.querySelector('[data-filter="all"]');
+            if (allFilter) allFilter.classList.add('active');
+            
+            applyFilters();
+        });
+    }
+    
+    // Project card clicks
+    const projectCards = document.querySelectorAll('.project-card');
+    projectCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            // Don't navigate if clicking on a link
+            if (e.target.tagName === 'A') return;
+            
+            const url = this.dataset.url;
+            if (url) {
+                window.location.href = url;
+            }
+        });
+        
+        // Add keyboard support
+        card.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const url = this.dataset.url;
+                if (url) {
+                    window.location.href = url;
+                }
+            }
+        });
+        
+        // Make cards focusable
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', `View project: ${card.querySelector('.project-card-title').textContent}`);
+    });
+    
+    // Tech tag clicks
+    const techTags = document.querySelectorAll('.tech-tag');
+    techTags.forEach(tag => {
+        tag.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const tech = this.textContent.trim().toLowerCase().replace(/\s+/g, '-');
+            const filterBtn = document.querySelector(`[data-filter="${tech}"][data-type="technology"]`);
+            if (filterBtn) {
+                filterBtn.click();
+            }
+        });
+    });
+}
+
+function animateStats() {
+    const statNumbers = document.querySelectorAll('.stat-number');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateNumber(entry.target);
+                observer.unobserve(entry.target);
+            }
+        });
+    });
+    
+    statNumbers.forEach(stat => observer.observe(stat));
+}
+
+function animateNumber(element) {
+    const finalNumber = parseInt(element.textContent);
+    let current = 0;
+    const increment = Math.ceil(finalNumber / 20);
+    
+    if (finalNumber > 0) {
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= finalNumber) {
+                current = finalNumber;
+                clearInterval(timer);
+            }
+            element.textContent = current;
+        }, 50);
+    }
+}
+
+function updateFilterCounts(visibleCount) {
+    const allFilter = document.querySelector('[data-filter="all"] .count');
+    if (allFilter) {
+        allFilter.textContent = `(${visibleCount})`;
+    }
+}
+
+// Analytics tracking for project interactions
+function trackProjectInteraction(projectTitle, interactionType) {
+    console.log(`Project interaction: ${projectTitle} - ${interactionType}`);
+    // Add analytics tracking here if needed
+}
+
+// Add interaction tracking to project links
+document.addEventListener('click', function(e) {
+    const projectLink = e.target.closest('.project-link');
+    if (projectLink) {
+        const projectCard = projectLink.closest('.project-card, .featured-project-card');
+        if (projectCard) {
+            const projectTitle = projectCard.querySelector('.project-card-title, .featured-project-title').textContent;
+            const linkType = projectLink.classList.contains('demo') ? 'Demo' : 
+                            projectLink.classList.contains('github') ? 'GitHub' : 
+                            projectLink.classList.contains('paper') ? 'Paper' : 'Link';
+            
+            trackProjectInteraction(projectTitle, linkType);
+        }
+    }
+});
+</script>
+
+<style>
+/* Work archive specific styles */
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-group-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-muted, #718096);
+    margin-right: 0.5rem;
+}
+
+.featured-projects {
+    margin-bottom: 4rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--color-border-light, #e2e8f0);
+}
+
+.featured-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text-primary, #2d3748);
+    margin-bottom: 2rem;
+}
+
+.featured-projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+}
+
+.featured-project-card {
+    background: var(--color-bg-primary, #ffffff);
+    border: 2px solid var(--color-accent, #805ad5);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.featured-project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(128, 90, 213, 0.2);
+}
+
+.featured-project-image {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+}
+
+.featured-project-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.featured-project-card:hover .featured-project-image img {
+    transform: scale(1.05);
+}
+
+.project-overlay {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    right: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.project-type-badge {
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.project-status-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.project-status-badge.status-completed {
+    background: var(--color-success, #38a169);
+    color: white;
+}
+
+.project-status-badge.status-in-progress {
+    background: var(--color-warning, #ed8936);
+    color: white;
+}
+
+.project-status-badge.status-archived {
+    background: var(--color-text-muted, #718096);
+    color: white;
+}
+
+.featured-project-content {
+    padding: 2rem;
+}
+
+.featured-project-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.featured-project-title a {
+    color: var(--color-text-primary, #2d3748);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.featured-project-title a:hover {
+    color: var(--color-accent, #805ad5);
+}
+
+.featured-project-description {
+    color: var(--color-text-secondary, #4a5568);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.featured-tech-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.tech-badge {
+    background: var(--color-bg-tertiary, #edf2f7);
+    color: var(--color-text-secondary, #4a5568);
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    border: 1px solid var(--color-border-light, #e2e8f0);
+}
+
+.tech-more {
+    background: var(--color-text-muted, #718096);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+}
+
+.featured-project-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.project-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.project-link.demo {
+    background: var(--color-primary, #3182ce);
+    color: white;
+}
+
+.project-link.demo:hover {
+    background: var(--color-primary-dark, #2c5aa0);
+    text-decoration: none;
+}
+
+.project-link.github,
+.project-link.paper {
+    background: var(--color-bg-secondary, #f7fafc);
+    color: var(--color-text-secondary, #4a5568);
+    border: 1px solid var(--color-border-light, #e2e8f0);
+}
+
+.project-link.github:hover,
+.project-link.paper:hover {
+    background: var(--color-bg-tertiary, #edf2f7);
+    text-decoration: none;
+}
+
+.project-card-image-placeholder {
+    height: 240px;
+    background: linear-gradient(135deg, var(--color-bg-secondary, #f7fafc), var(--color-bg-tertiary, #edf2f7));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: var(--color-text-muted, #718096);
+    position: relative;
+}
+
+.placeholder-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.7;
+}
+
+.placeholder-type {
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.project-card-overlay {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-end;
+}
+
+.work-archive.list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.work-archive.list-view .project-card {
+    display: flex;
+    flex-direction: row;
+    max-width: none;
+    height: 200px;
+}
+
+.work-archive.list-view .project-card-image-container,
+.work-archive.list-view .project-card-image-placeholder {
+    width: 300px;
+    height: 200px;
+    flex-shrink: 0;
+}
+
+.work-archive.list-view .project-card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.5rem;
+}
+
+.work-archive.list-view .project-tech-stack {
+    margin-bottom: 1rem;
+}
+
+.work-cta {
+    background: linear-gradient(135deg, var(--color-accent, #805ad5), var(--color-primary, #3182ce));
+    color: white;
+    padding: 4rem 2rem;
+    border-radius: 12px;
+    text-align: center;
+    margin-top: 4rem;
+}
+
+.cta-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.cta-description {
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.cta-btn.primary {
+    background: white;
+    color: var(--color-accent, #805ad5);
+}
+
+.cta-btn.primary:hover {
+    transform: scale(1.05);
+    text-decoration: none;
+}
+
+.cta-btn.secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.cta-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
+    text-decoration: none;
+}
+
+/* Work page specific styles */
+.work-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.section-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--color-text-primary, #2d3748);
+    margin-bottom: 1rem;
+}
+
+.section-description {
+    font-size: 1.25rem;
+    color: var(--color-text-secondary, #4a5568);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.work-stats {
+    background: var(--color-bg-secondary, #f7fafc);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+}
+
+.stats-title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-text-primary, #2d3748);
+    margin-bottom: 2rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 2rem;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primary, #3182ce);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: var(--color-text-secondary, #4a5568);
+    font-weight: 500;
+}
+
+.work-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.work-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-border-medium, #cbd5e0);
+    background: var(--color-bg-primary, #ffffff);
+    color: var(--color-text-secondary, #4a5568);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.work-filter:hover {
+    border-color: var(--color-primary, #3182ce);
+    color: var(--color-primary, #3182ce);
+}
+
+.work-filter.active {
+    background: var(--color-primary, #3182ce);
+    color: white;
+    border-color: var(--color-primary, #3182ce);
+}
+
+.work-filter .count {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+.archive-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.archive-title {
+    font-size: 1.875rem;
+    font-weight: 600;
+    color: var(--color-text-primary, #2d3748);
+}
+
+.archive-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sort-controls label {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary, #4a5568);
+    font-weight: 500;
+}
+
+.sort-select {
+    padding: 0.5rem;
+    border: 1px solid var(--color-border-medium, #cbd5e0);
+    border-radius: 6px;
+    background: var(--color-bg-primary, #ffffff);
+    color: var(--color-text-primary, #2d3748);
+    font-size: 0.875rem;
+}
+
+.view-controls {
+    display: flex;
+    border: 1px solid var(--color-border-medium, #cbd5e0);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.view-btn {
+    padding: 0.5rem 0.75rem;
+    border: none;
+    background: var(--color-bg-primary, #ffffff);
+    color: var(--color-text-secondary, #4a5568);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+}
+
+.view-btn:hover {
+    background: var(--color-bg-secondary, #f7fafc);
+}
+
+.view-btn.active {
+    background: var(--color-primary, #3182ce);
+    color: white;
+}
+
+.work-archive {
+    display: grid;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.work-archive.grid-view {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+}
+
+.project-card {
+    background: var(--color-bg-primary, #ffffff);
+    border: 1px solid var(--color-border-light, #e2e8f0);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
+    border-color: var(--color-primary, #3182ce);
+}
+
+.project-card-image-container {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.project-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.project-card:hover .project-card-image {
+    transform: scale(1.05);
+}
+
+.project-card-content {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-type {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-primary, #3182ce);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.project-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.project-card-title a {
+    color: var(--color-text-primary, #2d3748);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.project-card-title a:hover {
+    color: var(--color-primary, #3182ce);
+}
+
+.project-card-description {
+    color: var(--color-text-secondary, #4a5568);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+}
+
+.project-tech-stack {
+    margin-bottom: 1.5rem;
+}
+
+.tech-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-muted, #718096);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.tech-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tech-tag {
+    background: var(--color-bg-tertiary, #edf2f7);
+    color: var(--color-text-secondary, #4a5568);
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tech-tag:hover {
+    background: var(--color-primary, #3182ce);
+    color: white;
+}
+
+.project-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.project-links {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.project-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.project-link.demo {
+    background: var(--color-primary, #3182ce);
+    color: white;
+}
+
+.project-link.github,
+.project-link.paper {
+    background: var(--color-bg-secondary, #f7fafc);
+    color: var(--color-text-secondary, #4a5568);
+    border: 1px solid var(--color-border-light, #e2e8f0);
+}
+
+.project-link:hover {
+    transform: scale(1.1);
+}
+
+.project-card-date {
+    font-size: 0.875rem;
+    color: var(--color-text-muted, #718096);
+}
+
+.work-empty,
+.no-results {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--color-text-muted, #718096);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--color-text-secondary, #4a5568);
+}
+
+.empty-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.clear-filters-btn {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: var(--color-secondary, #38a169);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.clear-filters-btn:hover {
+    background: var(--color-secondary, #2f855a);
+}
+
+.featured-badge {
+    background: var(--color-accent, #805ad5);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .work-page {
+        padding: 1rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .section-description {
+        font-size: 1rem;
+    }
+    
+    .work-filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .filter-group {
+        justify-content: center;
+    }
+    
+    .featured-projects-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .work-archive.grid-view {
+        grid-template-columns: 1fr;
+    }
+    
+    .work-archive.list-view .project-card {
+        flex-direction: column;
+        height: auto;
+    }
+    
+    .work-archive.list-view .project-card-image-container,
+    .work-archive.list-view .project-card-image-placeholder {
+        width: 100%;
+        height: 200px;
+    }
+    
+    .archive-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .archive-controls {
+        justify-content: space-between;
+    }
+    
+    .cta-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .cta-btn {
+        width: 100%;
+        max-width: 250px;
+        justify-content: center;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .featured-projects-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .featured-project-actions {
+        flex-direction: column;
+    }
+    
+    .project-link {
+        justify-content: center;
+        text-align: center;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .work-filters {
+        gap: 0.5rem;
+    }
+    
+    .work-filter {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+    }
+}
+
+/* Animation for project cards */
+.project-card {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideInUp 0.6s ease forwards;
+}
+
+.project-card:nth-child(2) { animation-delay: 0.1s; }
+.project-card:nth-child(3) { animation-delay: 0.2s; }
+.project-card:nth-child(4) { animation-delay: 0.3s; }
+
+@keyframes slideInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .project-card {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+    
+    .featured-project-card:hover {
+        transform: none;
+    }
+    
+    .project-card:hover {
+        transform: none;
+    }
+    
+    .project-link:hover {
+        transform: none;
+    }
+}
+</style>

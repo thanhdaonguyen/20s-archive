@@ -1,0 +1,187 @@
+---
+layout: default
+---
+
+<article class="journal-entry" itemscope itemtype="http://schema.org/BlogPosting">
+    <header class="journal-header">
+        <time class="journal-date" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+            {{ page.date | date: "%B %d, %Y" }}
+            {% assign days_ago = 'now' | date: '%s' | minus: page.date | date: '%s' | divided_by: 86400 %}
+            {% if days_ago == 0 %}
+                <span class="relative-time">Today</span>
+            {% elsif days_ago == 1 %}
+                <span class="relative-time">Yesterday</span>
+            {% elsif days_ago < 7 %}
+                <span class="relative-time">{{ days_ago }} days ago</span>
+            {% endif %}
+        </time>
+        
+        {% if page.title and page.title != "" %}
+        <h1 class="journal-title" itemprop="headline">{{ page.title }}</h1>
+        {% endif %}
+    </header>
+
+    <div class="journal-content" itemprop="articleBody">
+        {{ content }}
+    </div>
+
+    {% if page.images and page.images.size > 0 %}
+    <div class="journal-images">
+        {% assign image_count = page.images.size %}
+        {% if image_count == 1 %}
+            {% assign grid_class = "single-image" %}
+        {% elsif image_count == 2 %}
+            {% assign grid_class = "two-images" %}
+        {% elsif image_count == 3 %}
+            {% assign grid_class = "three-images" %}
+        {% else %}
+            {% assign grid_class = "four-plus-images" %}
+        {% endif %}
+        
+        <div class="journal-image-grid {{ grid_class }}">
+            {% for image in page.images %}
+            <div class="journal-image-container">
+                <img src="{{ image.url | relative_url }}" 
+                     alt="{{ image.alt | default: 'Journal image' }}" 
+                     class="journal-image"
+                     loading="lazy"
+                     tabindex="0">
+                {% if image.caption %}
+                <div class="journal-image-caption">{{ image.caption }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <footer class="journal-footer">
+        <div class="journal-meta">
+            {% if page.word_count %}
+            <div class="journal-word-count">
+                {{ page.word_count }} words
+            </div>
+            {% else %}
+            <div class="journal-word-count">
+                {{ content | number_of_words }} words
+            </div>
+            {% endif %}
+            
+            {% if page.mood %}
+            <div class="journal-mood">
+                <span class="mood-emoji">{{ page.mood.emoji | default: "😊" }}</span>
+                <span class="mood-text">{{ page.mood.text | default: page.mood }}</span>
+            </div>
+            {% endif %}
+            
+            {% if page.weather %}
+            <div class="journal-weather">
+                <span class="weather-emoji">{{ page.weather.emoji | default: "☀️" }}</span>
+                <span class="weather-text">{{ page.weather.text | default: page.weather }}</span>
+            </div>
+            {% endif %}
+            
+            {% if page.location %}
+            <div class="journal-location">
+                {{ page.location }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="journal-actions">
+            <button class="journal-action" onclick="copyToClipboard()" title="Copy link">
+                🔗
+            </button>
+            <button class="journal-action" onclick="shareEntry()" title="Share">
+                📤
+            </button>
+        </div>
+    </footer>
+</article>
+
+<!-- Navigation to previous/next entries -->
+<nav class="journal-navigation">
+    <div class="nav-links">
+        {% if page.previous and page.previous.categories contains 'journal' %}
+        <a href="{{ page.previous.url | relative_url }}" class="nav-link prev" rel="prev">
+            <span class="nav-label">← Previous Entry</span>
+            <span class="nav-title">{{ page.previous.title | default: page.previous.date | date: "%B %d, %Y" }}</span>
+        </a>
+        {% endif %}
+        
+        {% if page.next and page.next.categories contains 'journal' %}
+        <a href="{{ page.next.url | relative_url }}" class="nav-link next" rel="next">
+            <span class="nav-label">Next Entry →</span>
+            <span class="nav-title">{{ page.next.title | default: page.next.date | date: "%B %d, %Y" }}</span>
+        </a>
+        {% endif %}
+    </div>
+    
+    <div class="nav-center">
+        <a href="{{ '/journal' | relative_url }}" class="btn btn-secondary">
+            Back to Journal
+        </a>
+    </div>
+</nav>
+
+<!-- Schema.org structured data -->
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "{{ page.title | default: 'Journal Entry' | escape }}",
+    "datePublished": "{{ page.date | date_to_xmlschema }}",
+    "dateModified": "{{ page.last_modified_at | default: page.date | date_to_xmlschema }}",
+    "author": {
+        "@type": "Person",
+        "name": "{{ site.author }}"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ site.title }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ site.logo | absolute_url }}"
+        }
+    },
+    "description": "{{ page.excerpt | default: content | strip_html | truncate: 160 | escape }}",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ page.url | absolute_url }}"
+    }
+    {% if page.images and page.images.size > 0 %},
+    "image": [
+        {% for image in page.images %}
+        "{{ image.url | absolute_url }}"{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+    ]
+    {% endif %}
+}
+</script>
+
+<script>
+// Journal entry specific JavaScript
+function copyToClipboard() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+        alert('Link copied to clipboard!');
+    });
+}
+
+function shareEntry() {
+    if (navigator.share) {
+        navigator.share({
+            title: document.title,
+            url: window.location.href
+        });
+    } else {
+        copyToClipboard();
+    }
+}
+
+// Initialize gallery for this entry
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.Gallery && document.querySelector('.journal-image')) {
+        window.Gallery.init();
+    }
+});
+</script>

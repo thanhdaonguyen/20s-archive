@@ -1,0 +1,700 @@
+// Journal-specific styles for Thanhdao's Archive
+
+// Journal page layout
+
+.journal-page {
+    .section-header {
+        margin-bottom: $space-10;
+    }
+    
+    .section-title {
+        color: $color-text-primary;
+        position: relative;
+        
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -$space-2;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, $color-primary, $color-secondary);
+            border-radius: $border-radius-xl;
+        }
+    }
+}
+
+// Journal entries
+.journal-entries {
+    display: flex;
+    flex-direction: column;
+    gap: $space-8;
+}
+
+.journal-entry {
+    background: $color-bg-primary;
+    border: 1px solid $color-border-light;
+    border-radius: $border-radius-lg;
+    padding: $space-8;
+    position: relative;
+    transition: all $transition-base;
+    animation: fadeInUp 0.6s ease-out;
+    
+    // Entry number indicator
+    &::before {
+        content: counter(journal-counter);
+        counter-increment: journal-counter;
+        position: absolute;
+        top: $space-4;
+        right: $space-4;
+        background: $color-bg-tertiary;
+        color: $color-text-muted;
+        font-size: $font-size-xs;
+        font-weight: $font-weight-semibold;
+        padding: $space-1 $space-2;
+        border-radius: $border-radius-base;
+        min-width: 24px;
+        text-align: center;
+    }
+    
+    &:hover {
+        transform: scale(1.02);
+        box-shadow: $shadow-md;
+    }
+    
+    &:focus {
+        outline: 3px solid rgba($color-primary, 0.5);
+        outline-offset: 2px;
+    }
+    
+    &.loading {
+        opacity: 0.7;
+        
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid $color-primary;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+    }
+    
+    &.error {
+        background: $color-bg-tertiary;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
+        color: $color-text-muted;
+        font-size: $font-size-sm;
+        
+        &::before {
+            content: '📷 Image not available';
+        }
+    }
+}
+
+// Journal image captions
+.journal-image-caption {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    text-align: center;
+    margin-top: $space-2;
+    font-style: italic;
+    line-height: $line-height-normal;
+}
+
+// Journal entry footer
+.journal-footer {
+    margin-top: $space-6;
+    padding-top: $space-4;
+    border-top: 1px solid $color-border-light;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-3;
+}
+
+.journal-meta {
+    display: flex;
+    align-items: center;
+    gap: $space-4;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+}
+
+.journal-word-count {
+    display: flex;
+    align-items: center;
+    gap: $space-1;
+    
+    &::before {
+        content: '📝';
+    }
+}
+
+.journal-mood {
+    display: flex;
+    align-items: center;
+    gap: $space-1;
+    
+    .mood-emoji {
+        font-size: $font-size-base;
+    }
+    
+    .mood-text {
+        font-weight: $font-weight-medium;
+        color: $color-text-secondary;
+    }
+}
+
+.journal-weather {
+    display: flex;
+    align-items: center;
+    gap: $space-1;
+    
+    .weather-emoji {
+        font-size: $font-size-base;
+    }
+}
+
+.journal-location {
+    display: flex;
+    align-items: center;
+    gap: $space-1;
+    
+    &::before {
+        content: '📍';
+    }
+}
+
+// Journal entry actions
+.journal-actions {
+    display: flex;
+    gap: $space-2;
+}
+
+.journal-action {
+    background: none;
+    border: none;
+    color: $color-text-muted;
+    font-size: $font-size-sm;
+    cursor: pointer;
+    padding: $space-1 $space-2;
+    border-radius: $border-radius-base;
+    transition: all $transition-base;
+    
+    &:hover {
+        color: $color-primary;
+        background: rgba($color-primary, 0.1);
+    }
+    
+    &.active {
+        color: $color-primary;
+        background: rgba($color-primary, 0.15);
+    }
+}
+
+// Journal archive navigation
+.journal-archive-nav {
+    margin-bottom: $space-8;
+    text-align: center;
+}
+
+.journal-archive-filters {
+    display: flex;
+    justify-content: center;
+    gap: $space-2;
+    flex-wrap: wrap;
+    margin-bottom: $space-6;
+}
+
+.filter-btn {
+    background: $color-bg-secondary;
+    border: 1px solid $color-border-light;
+    color: $color-text-secondary;
+    padding: $space-2 $space-4;
+    border-radius: $border-radius-xl;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: all $transition-base;
+    
+    &:hover {
+        background: $color-bg-tertiary;
+        border-color: $color-border-medium;
+    }
+    
+    &.active {
+        background: $color-primary;
+        color: white;
+        border-color: $color-primary;
+    }
+}
+
+// Monthly archive view
+.journal-month-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: $space-6;
+    margin-bottom: $space-10;
+}
+
+.journal-month {
+    background: $color-bg-primary;
+    border: 1px solid $color-border-light;
+    border-radius: $border-radius-lg;
+    padding: $space-6;
+    
+    .month-header {
+        font-size: $font-size-lg;
+        font-weight: $font-weight-semibold;
+        color: $color-text-primary;
+        margin-bottom: $space-4;
+        text-align: center;
+    }
+    
+    .month-entries {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .month-entry {
+        padding: $space-2 0;
+        border-bottom: 1px solid $color-border-light;
+        
+        &:last-child {
+            border-bottom: none;
+        }
+        
+        a {
+            color: $color-text-secondary;
+            text-decoration: none;
+            font-size: $font-size-sm;
+            
+            &:hover {
+                color: $color-primary;
+            }
+        }
+        
+        .entry-date {
+            color: $color-text-muted;
+            font-size: $font-size-xs;
+        }
+    }
+}
+
+// Journal statistics
+.journal-stats {
+    background: $color-bg-secondary;
+    border-radius: $border-radius-lg;
+    padding: $space-6;
+    margin-bottom: $space-8;
+    
+    .stats-title {
+        font-size: $font-size-lg;
+        font-weight: $font-weight-semibold;
+        color: $color-text-primary;
+        margin-bottom: $space-4;
+        text-align: center;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: $space-4;
+    }
+    
+    .stat-item {
+        text-align: center;
+        
+        .stat-number {
+            font-size: $font-size-2xl;
+            font-weight: $font-weight-bold;
+            color: $color-primary;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: $font-size-sm;
+            color: $color-text-muted;
+            margin-top: $space-1;
+        }
+    }
+}
+
+// Lightbox styles for journal images
+.lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: $z-modal;
+    opacity: 0;
+    visibility: hidden;
+    transition: all $transition-base;
+    
+    &.active {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+.lightbox-content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.lightbox-header {
+    position: absolute;
+    top: -50px;
+    right: 0;
+    z-index: 1;
+}
+
+.lightbox-close {
+    background: rgba(white, 0.1);
+    border: 1px solid rgba(white, 0.2);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: $font-size-xl;
+    transition: all $transition-base;
+    
+    &:hover {
+        background: rgba(white, 0.2);
+        transform: scale(1.1);
+    }
+}
+
+.lightbox-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.lightbox-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: $border-radius-base;
+    transition: opacity $transition-base;
+    
+    &.loading {
+        opacity: 0.7;
+    }
+    
+    &.error {
+        background: rgba(white, 0.1);
+        color: white;
+        padding: $space-8;
+        text-align: center;
+        border-radius: $border-radius-base;
+    }
+}
+
+.lightbox-footer {
+    position: absolute;
+    bottom: -60px;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+.lightbox-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-4;
+    margin-bottom: $space-2;
+}
+
+.lightbox-prev,
+.lightbox-next {
+    background: rgba(white, 0.1);
+    border: 1px solid rgba(white, 0.2);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: $font-size-lg;
+    font-weight: bold;
+    transition: all $transition-base;
+    
+    &:hover:not(:disabled) {
+        background: rgba(white, 0.2);
+        transform: scale(1.1);
+    }
+    
+    &:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+}
+
+.lightbox-counter {
+    color: white;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    background: rgba(0, 0, 0, 0.5);
+    padding: $space-2 $space-3;
+    border-radius: $border-radius-xl;
+}
+
+.lightbox-caption {
+    color: rgba(white, 0.8);
+    font-size: $font-size-sm;
+    text-align: center;
+    margin-top: $space-2;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: $line-height-normal;
+}
+
+// Empty state
+.journal-empty {
+    text-align: center;
+    padding: $space-16 $space-4;
+    color: $color-text-muted;
+    
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: $space-4;
+        opacity: 0.5;
+    }
+    
+    .empty-title {
+        font-size: $font-size-xl;
+        font-weight: $font-weight-semibold;
+        color: $color-text-secondary;
+        margin-bottom: $space-2;
+    // Entry number indicator is now inside .journal-entry below
+
+    // Entry number indicator
+    &::before {
+        content: counter(journal-counter);
+        counter-increment: journal-counter;
+        position: absolute;
+        top: $space-4;
+        right: $space-4;
+        background: $color-bg-tertiary;
+        color: $color-text-muted;
+        font-size: $font-size-xs;
+        font-weight: $font-weight-semibold;
+        padding: $space-1 $space-2;
+        border-radius: $border-radius-base;
+        min-width: 24px;
+        text-align: center;
+    }
+
+
+// Counter initialization
+.journal-entries {
+    counter-reset: journal-counter;
+}
+
+// Journal entry header
+.journal-header {
+    margin-bottom: $space-5;
+    padding-bottom: $space-3;
+    border-bottom: 1px solid $color-border-light;
+}
+
+.journal-date {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    font-weight: $font-weight-medium;
+    margin-bottom: $space-2;
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    
+    &::before {
+        content: '📅';
+        font-size: $font-size-base;
+    }
+    
+    .relative-time {
+        color: $color-primary;
+        font-size: $font-size-xs;
+        margin-left: $space-2;
+        padding: $space-1 $space-2;
+        background: rgba($color-primary, 0.1);
+        border-radius: $border-radius-base;
+    }
+}
+
+.journal-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin: 0;
+    
+    // Optional titles (some entries might not have them)
+    &:empty {
+        display: none;
+    }
+}
+
+// Journal entry content
+.journal-content {
+    line-height: $line-height-relaxed;
+    color: $color-text-secondary;
+    margin-bottom: $space-6;
+    white-space: pre-wrap; // Preserve line breaks
+    word-wrap: break-word;
+    
+    // Style inline code
+    code {
+        background: rgba($color-primary, 0.1);
+        color: $color-primary;
+        padding: $space-1;
+        border-radius: $border-radius-sm;
+        font-size: 0.9em;
+    }
+    
+    // Style links in journal content
+    a {
+        color: $color-primary;
+        border-bottom: 1px dotted $color-primary;
+        
+        &:hover {
+            border-bottom-style: solid;
+        }
+    }
+    
+    // Handle long text gracefully
+    word-break: break-word;
+    hyphens: auto;
+    
+    // Empty state
+    &:empty::before {
+        content: 'No content';
+        color: $color-text-muted;
+        font-style: italic;
+    }
+}
+
+// Journal images
+.journal-images {
+    margin-top: $space-6;
+    
+    &:empty {
+        display: none;
+    }
+}
+
+.journal-image-grid {
+    display: grid;
+    gap: $space-4;
+    
+    // Dynamic grid based on image count
+    &.single-image {
+        grid-template-columns: 1fr;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    &.two-images {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    &.three-images {
+        grid-template-columns: repeat(3, 1fr);
+        
+        .journal-image:first-child {
+            grid-column: 1 / -1;
+        }
+    }
+    
+    &.four-plus-images {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.journal-image {
+    width: 100%;
+    border-radius: $border-radius-base;
+    cursor: pointer;
+    transition: all $transition-base;
+    background: $color-bg-tertiary;
+    
+    &:hover {
+        transform: scale(1.02);
+        box-shadow: $shadow-md;
+    }
+    &.loading {
+        background: rgba($color-primary, 0.1);
+        position: relative;
+        
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid $color-primary;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+    }
+    &.error {
+        background: $color-bg-tertiary;
+        color: $color-text-muted;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
+        font-size: $font-size-sm;
+        
+        &::before {
+            content: '📷 Image not available';
+            display: block;
+        }
+    }
+    img {
+        width: 100%;
+        height: auto;
+        border-radius: $border-radius-base;
+        display: block;
+    }
+    .journal-image-caption {
+        font-size: $font-size-sm;
+        color: $color-text-muted;
+        text-align: center;
+        margin-top: $space-2;
+        font-style: italic;
+        line-height: $line-height-normal;
+    }
+}}}

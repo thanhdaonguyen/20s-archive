@@ -1,0 +1,707 @@
+
+
+// Responsive styles for Thanhdao's Archive
+
+// Mobile-first approach with progressive enhancement
+
+// Extra small devices (portrait phones, less than 576px)
+
+
+@media (max-width: #{$breakpoint-sm - 1px}) {
+    // Header adjustments
+    .header-container {
+        padding: 0 $space-4;
+        height: 50px;
+    }
+    
+    .logo {
+        font-size: $font-size-lg;
+    }
+    
+    // Navigation
+    .nav-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: $color-bg-primary;
+        flex-direction: column;
+        border-top: 1px solid $color-border-light;
+        box-shadow: $shadow-lg;
+        z-index: $z-dropdown;
+        
+        &.active {
+            display: flex;
+        }
+    }
+    
+    .nav-link {
+        padding: $space-4 $space-5;
+        border-bottom: 1px solid $color-border-light;
+        border-left: none;
+        
+        &:last-child {
+            border-bottom: none;
+        }
+        
+        &.active {
+            border-left: 4px solid $color-primary;
+            border-bottom-color: transparent;
+        }
+    }
+    
+    .menu-toggle {
+        display: flex;
+    }
+    
+    // Main content
+    .main-content {
+        padding: $space-6 0;
+    }
+    
+    .container {
+        padding: 0 $space-4;
+    }
+    
+    // Section headers
+    .section-title {
+        font-size: $font-size-3xl;
+    }
+    
+    .section-description {
+        font-size: $font-size-base;
+    }
+    
+    // Content grids
+    .content-grid {
+        gap: $space-4;
+        
+        &.two-column,
+        &.three-column {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    // Journal styles
+    .journal-entry {
+        padding: $space-5;
+        margin-bottom: $space-6;
+    }
+    
+    .journal-image-grid {
+        grid-template-columns: 1fr !important;
+        gap: $space-3;
+        
+        &.three-images .journal-image:first-child {
+            grid-column: 1;
+        }
+    }
+    
+    .journal-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $space-2;
+    }
+    
+    // Blog styles
+    .blog-archive {
+        grid-template-columns: 1fr;
+        gap: $space-6;
+    }
+    
+    .blog-card-content {
+        padding: $space-4;
+    }
+    
+    .blog-post-title {
+        font-size: $font-size-3xl;
+    }
+    
+    .blog-post-meta {
+        flex-direction: column;
+        gap: $space-2;
+    }
+    
+    .blog-navigation {
+        grid-template-columns: 1fr;
+        gap: $space-4;
+    }
+    
+    .blog-filters {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    // Work styles
+    .work-archive {
+        grid-template-columns: 1fr;
+        gap: $space-8;
+    }
+    
+    .project-card-content {
+        padding: $space-5;
+    }
+    
+    .project-title {
+        font-size: $font-size-3xl;
+    }
+    
+    .project-meta {
+        flex-direction: column;
+        gap: $space-3;
+    }
+    
+    .project-actions {
+        flex-direction: column;
+    }
+    
+    .project-navigation {
+        grid-template-columns: 1fr;
+        gap: $space-4;
+    }
+    
+    .work-stats .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: $space-4;
+    }
+    
+    // Components
+    .card-content {
+        padding: $space-4;
+    }
+    
+    .pagination {
+        gap: $space-1;
+        
+        .pagination-btn {
+            min-width: 36px;
+            height: 36px;
+            padding: 0 $space-2;
+            font-size: $font-size-sm;
+        }
+    }
+    
+    // Lightbox
+    .lightbox-content {
+        max-width: 95vw;
+        max-height: 95vh;
+    }
+    
+    .lightbox-header {
+        top: -40px;
+    }
+    
+    .lightbox-footer {
+        bottom: -50px;
+    }
+    
+    .lightbox-close,
+    .lightbox-prev,
+    .lightbox-next {
+        width: 36px;
+        height: 36px;
+        font-size: $font-size-base;
+    }
+    
+    // Utilities
+    .text-center-mobile {
+        text-align: center;
+    }
+    
+    .hidden-mobile {
+        display: none !important;
+    }
+}
+
+// Small devices (landscape phones, 576px and up)
+@media (min-width: $breakpoint-sm) and (max-width: #{$breakpoint-md - 1px}) {
+    .header-container {
+        padding: 0 $space-5;
+    }
+    
+    .container {
+        padding: 0 $space-5;
+    }
+    
+    // Content grids
+    .content-grid {
+        &.three-column {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    // Journal
+    .journal-image-grid {
+        &.two-images {
+            grid-template-columns: 1fr;
+        }
+        
+        &.three-images {
+            grid-template-columns: repeat(2, 1fr);
+            
+            .journal-image:first-child {
+                grid-column: 1 / -1;
+            }
+        }
+        
+        &.four-plus-images {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    // Blog
+    .blog-archive {
+        grid-template-columns: 1fr;
+    }
+    
+    .blog-post-meta {
+        gap: $space-4;
+    }
+    
+    // Work
+    .work-archive {
+        grid-template-columns: 1fr;
+    }
+    
+    .work-stats .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: $breakpoint-md) and (max-width: #{$breakpoint-lg - 1px}) {
+    .header-container {
+        padding: 0 $space-6;
+    }
+    
+    .container {
+        padding: 0 $space-6;
+    }
+    
+    // Hide mobile menu toggle
+    .menu-toggle {
+        display: none;
+    }
+    
+    .nav-menu {
+        display: flex !important;
+    }
+    
+    // Content grids
+    .content-grid {
+        &.two-column {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        &.three-column {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    // Journal
+    .journal-image-grid {
+        &.two-images {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        &.three-images {
+            grid-template-columns: repeat(2, 1fr);
+            
+            .journal-image:first-child {
+                grid-column: 1 / -1;
+            }
+        }
+    }
+    
+    // Blog
+    .blog-archive {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .blog-navigation {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    // Work
+    .work-archive {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .project-navigation {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+// Large devices (desktops, 1024px and up)
+@media (min-width: $breakpoint-lg) and (max-width: #{$breakpoint-xl - 1px}) {
+    .header-container {
+        padding: 0 $space-8;
+    }
+    
+    .container {
+        padding: 0 $space-8;
+    }
+    
+    // Content grids
+    .content-grid {
+        &.two-column {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        &.three-column {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    // Journal
+    .journal-image-grid {
+        &.three-images {
+            grid-template-columns: repeat(3, 1fr);
+            
+            .journal-image:first-child {
+                grid-column: 1;
+            }
+        }
+        
+        &.four-plus-images {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    // Blog
+    .blog-archive {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    // Work
+    .work-archive {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+// Extra large devices (large desktops, 1280px and up)
+@media (min-width: $breakpoint-xl) {
+    .header-container {
+        padding: 0 $space-10;
+    }
+    
+    .container {
+        padding: 0 $space-10;
+    }
+    
+    // Content grids
+    .content-grid {
+        &.three-column {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    // Journal
+    .journal-image-grid {
+        &.four-plus-images {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+    
+    // Blog
+    .blog-archive {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    // Work
+    .work-archive {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+// High DPI displays
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    // Optimize for retina displays
+    .logo {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .card {
+        border-width: 0.5px;
+    }
+    
+    .nav-link.active {
+        border-bottom-width: 2px;
+    }
+}
+
+// Landscape orientation on mobile
+@media (max-width: $breakpoint-md) and (orientation: landscape) {
+    .main-content {
+        padding: $space-4 0;
+    }
+    
+    .section-header {
+        margin-bottom: $space-6;
+    }
+    
+    .journal-entry {
+        padding: $space-4;
+    }
+    
+    .blog-card-content,
+    .project-card-content {
+        padding: $space-4;
+    }
+    
+    // Adjust lightbox for landscape
+    .lightbox-content {
+        max-height: 85vh;
+    }
+}
+
+// Print styles
+@media print {
+    * {
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+    
+    .site-header,
+    .pagination,
+    .blog-navigation,
+    .project-navigation,
+    .lightbox-overlay,
+    .back-to-top,
+    .menu-toggle {
+        display: none !important;
+    }
+    
+    .main-content {
+        padding: 0;
+    }
+    
+    .journal-entry,
+    .blog-post,
+    .project-page {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    
+    .journal-images,
+    .blog-post-featured-image,
+    .project-featured-image {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    
+    // Ensure readability in print
+    body {
+        font-size: 12pt;
+        line-height: 1.4;
+        color: #000 !important;
+        background: #fff !important;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        color: #000 !important;
+        page-break-after: avoid;
+    }
+    
+    a {
+        color: #000 !important;
+        text-decoration: underline !important;
+        
+        &[href]:after {
+            content: " (" attr(href) ")";
+            font-size: 0.8em;
+            color: #666;
+        }
+    }
+    
+    .card {
+        border: 1px solid #ccc !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    
+    .lightbox-image,
+    .journal-image,
+    .blog-card-image,
+    .project-card-image {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
+
+// Reduced motion preferences
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .card:hover {
+        transform: none;
+    }
+    
+    .journal-image:hover,
+    .lightbox-image {
+        transform: none;
+    }
+    
+    .loading-spinner {
+        animation: none;
+        border: 3px solid $color-primary;
+    }
+}
+
+// Dark mode support (if implemented)
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-text-primary: #f7fafc;
+        --color-text-secondary: #e2e8f0;
+        --color-text-muted: #a0aec0;
+        --color-bg-primary: #1a202c;
+        --color-bg-secondary: #2d3748;
+        --color-bg-tertiary: #4a5568;
+        --color-border-light: #4a5568;
+        --color-border-medium: #718096;
+    }
+    
+    .lightbox-overlay {
+        background: rgba(0, 0, 0, 0.95);
+    }
+    
+    pre {
+        background: #2d3748;
+        color: #f7fafc;
+    }
+}
+
+// Focus management for accessibility
+@media (any-hover: none) {
+    // Touch devices - enhance tap targets
+    .nav-link {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .btn {
+        min-height: 44px;
+    }
+    
+    .card {
+        &:hover {
+            transform: none;
+        }
+        
+        &:active {
+            transform: scale(0.98);
+        }
+    }
+    
+    .journal-image,
+    .lightbox-prev,
+    .lightbox-next,
+    .lightbox-close {
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
+
+// Container queries (future enhancement)
+@supports (container-type: inline-size) {
+    .blog-archive,
+    .work-archive {
+        container-type: inline-size;
+    }
+    
+    @container (max-width: 600px) {
+        .blog-archive {
+            grid-template-columns: 1fr;
+        }
+        
+        .work-archive {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @container (min-width: 900px) {
+        .blog-archive {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .work-archive {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+}
+
+// Utility classes for responsive behavior
+.responsive-hidden {
+    @media (max-width: #{$breakpoint-sm - 1px}) {
+        display: none !important;
+    }
+}
+
+.tablet-hidden {
+    @media (min-width: $breakpoint-sm) and (max-width: #{$breakpoint-lg - 1px}) {
+        display: none !important;
+    }
+}
+
+.desktop-hidden {
+    @media (min-width: $breakpoint-lg) {
+        display: none !important;
+    }
+}
+
+.mobile-only {
+    @media (min-width: $breakpoint-sm) {
+        display: none !important;
+    }
+}
+
+.tablet-only {
+    @media (max-width: #{$breakpoint-sm - 1px}), (min-width: $breakpoint-lg) {
+        display: none !important;
+    }
+}
+
+.desktop-only {
+    @media (max-width: #{$breakpoint-lg - 1px}) {
+        display: none !important;
+    }
+}
+
+// Responsive text utilities
+.text-responsive {
+    font-size: $font-size-sm;
+    
+    @media (min-width: $breakpoint-sm) {
+        font-size: $font-size-base;
+    }
+    
+    @media (min-width: $breakpoint-md) {
+        font-size: $font-size-lg;
+    }
+}
+
+.title-responsive {
+    font-size: $font-size-2xl;
+    
+    @media (min-width: $breakpoint-sm) {
+        font-size: $font-size-3xl;
+    }
+    
+    @media (min-width: $breakpoint-md) {
+        font-size: $font-size-4xl;
+    }
+    
+    @media (min-width: $breakpoint-lg) {
+        font-size: $font-size-5xl;
+    }
+}

@@ -1,0 +1,30 @@
+<footer class="site-footer">
+    <div class="footer-content">
+        <div class="footer-links">
+            <a href="{{ '/journal' | relative_url }}">Journal</a>
+            <a href="{{ '/blog' | relative_url }}">Blog</a>
+            <a href="{{ '/work' | relative_url }}">Work</a>
+            {% if site.social.github %}
+            <a href="https://github.com/{{ site.social.github }}" target="_blank" rel="noopener">GitHub</a>
+            {% endif %}
+            {% if site.social.linkedin %}
+            <a href="https://linkedin.com/in/{{ site.social.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>
+            {% endif %}
+            {% if site.social.email %}
+            <a href="mailto:{{ site.social.email }}">Email</a>
+            {% endif %}
+        </div>
+        
+        <div class="footer-copyright">
+            <p>&copy; {{ 'now' | date: '%Y' }} {{ site.author }}. Built with Jekyll and hosted on GitHub Pages.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Back to top button -->
+<button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Back to top">
+    ↑
+</button>
+
+<!-- Skip link for accessibility -->
+<a class="skip-link" href="#main-content">Skip to main content</a>
